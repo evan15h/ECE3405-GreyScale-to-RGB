@@ -1,4 +1,5 @@
 from PIL import Image
+import cv2
 import os
 
 def convert_to_greyscale(input_path, output_path):
