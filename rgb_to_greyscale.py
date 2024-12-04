@@ -1,32 +1,33 @@
-from PIL import Image
-import cv2
+import tensorflow as tf
+import numpy as np
 import os
+import cv2
+import tensorflow as tf
 
-def convert_to_greyscale(input_path, output_path):
-    """
-    Converts an RGB image to greyscale and saves it.
+# Load CIFAR-10 dataset
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
 
-    :param input_path: Path to the input RGB image.
-    :param output_path: Path where the greyscale image will be saved.
-    """
-    try:
-        # Open the input image
-        img = Image.open(input_path)
-        
-        # Convert the image to greyscale
-        greyscale_img = img.convert("L")
-        
-        # Save the greyscale image
-        greyscale_img.save(output_path)
-        print(f"Greyscale image saved to: {output_path}")
-    except Exception as e:
-        print(f"Error: {e}")
+# CIFAR-10 class labels
+class_labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
-# Example usage:
-if __name__ == "__main__":
-    # Paths to the input RGB image and the output greyscale image
-    input_image_path = "input_image.jpg"  # Change this to your input image path
-    output_image_path = "output_image_greyscale.jpg"  # Change this to your desired output path
+# Filter only "dog" images (class index 5)
+dog_class_index = 5
+dog_images = x_train[y_train.flatten() == dog_class_index]
+dog_labels = y_train[y_train.flatten() == dog_class_index]
+
+# Save the dog images as grayscale
+output_dir = "data/CIFAR10DogsGrayscale"
+os.makedirs(output_dir, exist_ok=True)
+
+for i, image in enumerate(dog_images):
+    # Convert to grayscale
+    gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     
-    # Convert the image
-    convert_to_greyscale(input_image_path, output_image_path)
+    # Save image
+    output_path = os.path.join(output_dir, f"dog_{i}.jpg")
+    cv2.imwrite(output_path, gray_image)
+
+    if i % 100 == 0:  # Print progress every 100 images
+        print(f"Saved {i}/{len(dog_images)} grayscale images")
+
+print("All dog images have been saved in grayscale format.")
