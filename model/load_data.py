@@ -4,12 +4,24 @@ import cv2
 #pylint: disable=import-error
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-def load_stanford_dogs_data(data_dir, image_size=(64, 64)):
+
+
+def load_stanford_dogs_data(data_dir, image_size=(64, 64), selected_breeds=None):
     grayscale_images = []
     rgb_images = []
     labels = []
-    breed_mapping = {breed: idx for idx, breed in enumerate(os.listdir(data_dir))}
+    all_breeds = os.listdir(data_dir)
+    print("Folders found in data_dir:", all_breeds) 
+
+    # Filter folders if selected_breeds is provided
+    if selected_breeds:
+        all_breeds = [breed for breed in all_breeds if breed in selected_breeds]
+
+    breed_mapping = {breed: idx for idx, breed in enumerate(all_breeds)}
+    print(f"Filtered breeds: {all_breeds}")
+    print(f"Breed mapping: {breed_mapping}")
     
     for breed, label in breed_mapping.items():
         breed_dir = os.path.join(data_dir, breed)
@@ -34,6 +46,14 @@ def load_stanford_dogs_data(data_dir, image_size=(64, 64)):
             # Append the label
             labels.append(label)
     
+    # Debugging prints
+    print(f"Number of grayscale images: {len(grayscale_images)}")
+    print(f"Number of RGB images: {len(rgb_images)}")
+    print(f"Number of labels: {len(labels)}")
+
+    if not grayscale_images or not rgb_images or not labels:
+        raise ValueError("No images or labels were loaded. Check the dataset directory or selected breeds.")
+
     # Convert lists to numpy arrays
     grayscale_images = np.array(grayscale_images)
     rgb_images = np.array(rgb_images)

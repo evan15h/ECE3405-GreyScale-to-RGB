@@ -38,4 +38,3 @@ def build_stanford_dogs_model(input_shape=(64, 64, 1), num_breeds=120):
     model = Model(inputs=input_img, outputs=[breed_prediction, output_img])
 
     return model
-
