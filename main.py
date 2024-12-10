@@ -4,7 +4,7 @@ from model.train_evaluate import compile_model, train_model, evaluate_model, vis
 
 # Load and preprocess data 
 # DATA_DIR = "data/Images"
-DATA_DIR = "data/Preprocessed"
+DATA_DIR = "/Users/paigerust/Desktop/ECE3405/Final/data"
 #'n02088094-Afghan_hound', 'n02099601-golden_retriever'
 selected_breeds = ['Keeshond', 'Pomeranian', 'Standard Poodle']
 IMAGE_SIZE = (64, 64)
