@@ -14,9 +14,10 @@ def load_stanford_dogs_data(data_dir, mask_dir, image_size=(128, 128)):
     labels = []
     mask_images = []  
     all_breeds = os.listdir(data_dir)
+    mask_breeds = os.listdir(mask_dir)
     print("Folders found in data_dir:", all_breeds) 
+    print("Folders found in mask_dir:", mask_breeds)
     
-    print("Preparing data transformations...")
     transform = transforms.Compose([
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
@@ -35,28 +36,36 @@ def load_stanford_dogs_data(data_dir, mask_dir, image_size=(128, 128)):
     
     for breed, label in breed_mapping.items():
         breed_dir = os.path.join(data_dir, breed)
+        mask_breed_dir = os.path.join(mask_dir, f"Masked {breed}")
 
-        if os.path.isdir(breed_dir):
-            for file_name in os.listdir(breed_dir):
-                file_path = os.path.join(breed_dir, file_name)
-                
-                # Read RGB image
-                rgb_image = cv2.imread(file_path)
-                if rgb_image is None:
-                    print(f"Skipping invalid image: {file_path}")
-                    continue
-                
-                # Resize and normalize RGB image (convert to float32)
-                rgb_image = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2RGB)
-                rgb_image = cv2.resize(rgb_image, image_size).astype('float32') / 255.0
-                rgb_images.append(rgb_image)
-                
-                # Convert to grayscale (cv2 expects uint8 input for color conversions)
-                gray_image = cv2.cvtColor((rgb_image * 255).astype('uint8'), cv2.COLOR_RGB2GRAY)
-                grayscale_images.append(np.expand_dims(gray_image, axis=-1))  # Add channel dimension
-                
-                # Append the label
-                labels.append(label)
+        for file_name in os.listdir(breed_dir):
+            file_path = os.path.join(breed_dir, file_name)
+            mask_path = os.path.join(mask_breed_dir, f"mask_for_{file_name}")
+            
+            # Read RGB image
+            image = cv2.imread(file_path)
+            if image is None:
+                print(f"Skipping invalid image: {file_path}")
+                continue
+
+            mask_image = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
+            if mask_image is None:
+                print(f"Skipping missing mask: {mask_path}")
+                continue
+            
+            # Resize and normalize RGB image (convert to float32)
+            rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
+            rgb_image = cv2.resize(rgb_image, image_size).astype('float32') / 255.0
+            
+            # Convert to grayscale (cv2 expects uint8 input for color conversions)
+            gray_image = cv2.cvtColor((rgb_image * 255).astype('uint8'), cv2.COLOR_RGB2GRAY)
+
+            combined_input = np.stack((gray_image, mask_image), axis=-1)  # (H, W, 2)
+
+            grayscale_images.append(combined_input)
+            rgb_images.append(rgb_image)
+            mask_images.append(mask_image)
+            labels.append(label)
     
     # Debugging prints
     print(f"Number of grayscale images: {len(grayscale_images)}")
