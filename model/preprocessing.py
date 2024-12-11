@@ -12,7 +12,7 @@ def detect_and_crop_with_yolo(input_dir, output_dir, model_path='yolov5s', targe
     os.makedirs(output_dir, exist_ok=True)
 
     # Load YOLOv5 model (pretrained weights)
-    model = torch.hub.load('./yolov5', 'yolov5s', source='local')  # Load YOLOv5 locally
+    model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
 
     for filename in os.listdir(input_dir):
         filepath = os.path.join(input_dir, filename)
