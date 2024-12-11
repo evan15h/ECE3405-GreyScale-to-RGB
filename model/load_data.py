@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import cv2
+import torch
 #pylint: disable=import-error
 from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
@@ -82,18 +83,31 @@ def load_stanford_dogs_data(data_dir, mask_dir, image_size=(128, 128)):
     rgb_images = np.array(rgb_images)
     labels = to_categorical(np.array(labels), num_classes=len(breed_mapping))  # One-hot encode labels
 
-    grayscale_image_transform = np.empty([1, 128, 128, 1])
+    grayscale_image_transform = np.empty([1, 128, 128, 2])
 
     for image in grayscale_images:
-        image = image.reshape(128, 128)
+        image = image[0]
+        image1 = image[:, :, 0]
+        image2 = image[:, :, 1]
 
-        image = Image.fromarray(image, mode='L')
+        image1 = image1.reshape(128, 128)
+        image2 = image2.reshape(128, 128)
 
-        image = transform(image)
-        
-        image = np.array(image)
+        image1 = Image.fromarray(image1, mode='L')
+        image2 = Image.fromarray(image2, mode='L')
 
-        image = image.reshape(1, 128, 128, 1)
+        torch.manual_seed(42)
+        image1 = transform(image1)
+        torch.manual_seed(42)
+        image2 = transform(image2)
+
+        image1 = np.array(image1)
+        image2 = np.array(image2)
+
+        image1 = image1.reshape(1, 128, 128, 1)
+        image2 = image2.reshape(1, 128, 128, 1)
+
+        image = np.concatenate([image1, image2], axis=-1)
 
         grayscale_image_transform = np.vstack([grayscale_image_transform, image])
 
