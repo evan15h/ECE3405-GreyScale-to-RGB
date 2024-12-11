@@ -76,8 +76,10 @@ def load_stanford_dogs_data(data_dir, mask_dir, image_size=(128, 128)):
     if not grayscale_images or not rgb_images or not labels:
         raise ValueError("No images or labels were loaded. Check the dataset directory or selected breeds.")
 
+    print(grayscale_images.shape)
     # Convert lists to numpy arrays
     grayscale_images = np.array(grayscale_images)
+    print(grayscale_images.shape)
     rgb_images = np.array(rgb_images)
     labels = to_categorical(np.array(labels), num_classes=len(breed_mapping))  # One-hot encode labels
 
