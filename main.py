@@ -5,8 +5,8 @@ from model.breed_classifier import train_breed_classifier
 
 # Load and preprocess data 
 # DATA_DIR = "data/Images"
-DATA_DIR = "data/Preprocessed"
-MASK_DIR = "data/Masks"
+DATA_DIR = "/Users/paigerust/Desktop/ECE3405/Final/Preprocessed"
+MASK_DIR = "/Users/paigerust/Desktop/ECE3405/Final/Masks"
 # 'n02099601-golden_retriever'
 # selected_breeds = ['Keeshond', 'Afghan Hound', 'Golden Retriever', 'Standard Poodle']
 IMAGE_SIZE = (128, 128)
