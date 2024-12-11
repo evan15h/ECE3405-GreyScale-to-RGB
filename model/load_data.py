@@ -86,7 +86,6 @@ def load_stanford_dogs_data(data_dir, mask_dir, image_size=(128, 128)):
     grayscale_image_transform = np.empty([1, 128, 128, 2])
 
     for image in grayscale_images:
-        image = image[0, :, :, :]
         image1 = image[:, :, 0]
         image2 = image[:, :, 1]
 
