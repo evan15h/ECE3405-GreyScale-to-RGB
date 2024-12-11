@@ -96,8 +96,8 @@ def save_segmentation_masks_maskrcnn(input_dir, output_dir):
         cv2.imwrite(save_path, combined_mask)
         print(f"Mask saved: {save_path}")
 
-input_dir = "/Users/paigerust/Desktop/ECE3405/Final/Images/n02091134-whippet"
-output_dir = "/Users/paigerust/Desktop/ECE3405/Final/Preprocessed/Whippet"
-masked_output_dir = "/Users/paigerust/Desktop/ECE3405/Final/Masks/Whippet"
+input_dir = "/Users/paigerust/Desktop/ECE3405/Final/Images/n02088364-beagle"
+output_dir = "/Users/paigerust/Desktop/ECE3405/Final/Preprocessed/Beagle"
+masked_output_dir = "/Users/paigerust/Desktop/ECE3405/Final/Masks/Masked Beagle"
 detect_and_crop_with_yolo(input_dir, output_dir)
 save_segmentation_masks_maskrcnn(output_dir, masked_output_dir) #Create segmentation masks for cropped images
