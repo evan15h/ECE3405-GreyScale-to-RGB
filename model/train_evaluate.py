@@ -44,7 +44,7 @@ def visualize_results(model, X_test_gray, Y_test_rgb, breed_mapping):
     for i in range(5):
         plt.figure(figsize=(12, 4))
         plt.subplot(1, 3, 1)
-        plt.imshow(X_test_gray[i].squeeze(), cmap='gray')
+        plt.imshow(X_test_gray[i, :, :, 0], cmap='gray')  # Use only the first channel for grayscale
         plt.title("Grayscale Input")
         plt.axis('off')
 
@@ -59,3 +59,46 @@ def visualize_results(model, X_test_gray, Y_test_rgb, breed_mapping):
         plt.axis('off')
 
         plt.show()
+
+def plot_training_history(history):
+    # Plot loss for both outputs
+    plt.figure(figsize=(12, 6))
+
+    # Breed classification loss
+    plt.subplot(2, 2, 1)
+    plt.plot(history.history['breed_classification_loss'], label='Train Breed Loss')
+    plt.plot(history.history['val_breed_classification_loss'], label='Validation Breed Loss')
+    plt.title('Breed Classification Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    # RGB output loss
+    plt.subplot(2, 2, 2)
+    plt.plot(history.history['rgb_output_loss'], label='Train RGB Loss')
+    plt.plot(history.history['val_rgb_output_loss'], label='Validation RGB Loss')
+    plt.title('RGB Output Loss')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    # Breed classification accuracy
+    plt.subplot(2, 2, 3)
+    plt.plot(history.history['breed_classification_accuracy'], label='Train Accuracy')
+    plt.plot(history.history['val_breed_classification_accuracy'], label='Validation Accuracy')
+    plt.title('Breed Classification Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+
+    # RGB output Mean Absolute Error (MAE)
+    plt.subplot(2, 2, 4)
+    plt.plot(history.history['rgb_output_mae'], label='Train MAE')
+    plt.plot(history.history['val_rgb_output_mae'], label='Validation MAE')
+    plt.title('RGB Output Mean Absolute Error')
+    plt.xlabel('Epochs')
+    plt.ylabel('MAE')
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
