@@ -4,12 +4,12 @@ from model.train_evaluate import compile_model, train_model, evaluate_model, vis
 
 # Load and preprocess data 
 # DATA_DIR = "data/Images"
-DATA_DIR = "/Users/paigerust/Desktop/ECE3405/Final/data"
+DATA_DIR = "/Users/paigerust/Desktop/ECE3405/Final/ECE3405-GreyScale-to-RGB/Images_Specific/Preprocessed"
 #'n02088094-Afghan_hound', 'n02099601-golden_retriever'
-selected_breeds = ['Keeshond', 'Pomeranian', 'Standard Poodle']
+selected_breeds = ['n02113799-standard_poodle', 'n02112350-keeshond', 'n02112018-Pomeranian']
 IMAGE_SIZE = (64, 64)
 BATCH_SIZE = 32
-EPOCHS = 25
+EPOCHS = 10
 
 X_gray, Y_rgb, y_labels, breed_mapping = load_stanford_dogs_data(DATA_DIR, IMAGE_SIZE)
 X_train_gray, X_test_gray, Y_train_rgb, Y_test_rgb, y_train_labels, y_test_labels = split_data(X_gray, Y_rgb, y_labels)
