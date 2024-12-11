@@ -8,10 +8,11 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from torchvision import transforms
 from PIL import Image
 
-def load_stanford_dogs_data(data_dir, image_size=(64, 64), selected_breeds=None):
+def load_stanford_dogs_data(data_dir, mask_dir, image_size=(128, 128)):
     grayscale_images = []
     rgb_images = []
     labels = []
+    mask_images = []  
     all_breeds = os.listdir(data_dir)
     print("Folders found in data_dir:", all_breeds) 
     
@@ -22,12 +23,15 @@ def load_stanford_dogs_data(data_dir, image_size=(64, 64), selected_breeds=None)
         transforms.Normalize(mean=0.449, std=0.226)])
 
     # Filter folders if selected_breeds is provided
-    if selected_breeds:
-        all_breeds = [breed for breed in all_breeds if breed in selected_breeds]
+    # if selected_breeds:
+    #     all_breeds = [breed for breed in all_breeds if breed in selected_breeds]
 
     breed_mapping = {breed: idx for idx, breed in enumerate(all_breeds)}
+    mask_mapping = {mask: idx for idx, mask in enumerate(mask_breeds)}
     print(f"Filtered breeds: {all_breeds}")
     print(f"Breed mapping: {breed_mapping}")
+    print(f"Mask mapping: {mask_mapping}")
+
     
     for breed, label in breed_mapping.items():
         breed_dir = os.path.join(data_dir, breed)
@@ -57,6 +61,7 @@ def load_stanford_dogs_data(data_dir, image_size=(64, 64), selected_breeds=None)
     # Debugging prints
     print(f"Number of grayscale images: {len(grayscale_images)}")
     print(f"Number of RGB images: {len(rgb_images)}")
+    print(f"Number of masks: {len(mask_images)}")
     print(f"Number of labels: {len(labels)}")
 
     if not grayscale_images or not rgb_images or not labels:
@@ -67,10 +72,10 @@ def load_stanford_dogs_data(data_dir, image_size=(64, 64), selected_breeds=None)
     rgb_images = np.array(rgb_images)
     labels = to_categorical(np.array(labels), num_classes=len(breed_mapping))  # One-hot encode labels
 
-    grayscale_image_transform = np.empty([1, 64, 64, 1])
+    grayscale_image_transform = np.empty([1, 128, 128, 1])
 
     for image in grayscale_images:
-        image = image.reshape(64, 64)
+        image = image.reshape(128, 128)
 
         image = Image.fromarray(image, mode='L')
 
@@ -78,7 +83,7 @@ def load_stanford_dogs_data(data_dir, image_size=(64, 64), selected_breeds=None)
         
         image = np.array(image)
 
-        image = image.reshape(1, 64, 64, 1)
+        image = image.reshape(1, 128, 128, 1)
 
         grayscale_image_transform = np.vstack([grayscale_image_transform, image])
 

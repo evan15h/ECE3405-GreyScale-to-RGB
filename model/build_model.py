@@ -2,12 +2,14 @@ import tensorflow as tf
 from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D, Flatten, Dense, concatenate
 from tensorflow.keras.models import Model
 
-def build_stanford_dogs_model(input_shape=(64, 64, 1), num_breeds=120):
+def build_stanford_dogs_model(input_shape=(128, 128, 2), num_breeds=120):
     # Input: Grayscale Image
     input_img = Input(shape=input_shape)
 
-    # Shared Encoder
-    x = Conv2D(32, (3, 3), activation='relu', padding='same')(input_img)
+    # Encoder
+    x = Conv2D(16, (3, 3), activation='relu', padding='same')(input_img)
+    x = MaxPooling2D((2, 2), padding='same')(x)
+    x = Conv2D(32, (3, 3), activation='relu', padding='same')(x)
     x = MaxPooling2D((2, 2), padding='same')(x)
     x = Conv2D(64, (3, 3), activation='relu', padding='same')(x)
     encoded_features = MaxPooling2D((2, 2), padding='same')(x)
@@ -19,7 +21,7 @@ def build_stanford_dogs_model(input_shape=(64, 64, 1), num_breeds=120):
     breed_prediction = Dense(num_breeds, activation='softmax', name='breed_classification')(x_class)
 
     # Branch 2: Grayscale-to-RGB Colorization
-    breed_embedding = Dense(128, activation='relu')(breed_prediction)
+    breed_embedding = Dense(256, activation='relu')(breed_prediction)
     print("Breed embedding shape:", breed_embedding.shape)
     combined_features = concatenate([Flatten()(encoded_features), breed_embedding])
     print("Combined features shape:", combined_features.shape)
@@ -29,10 +31,15 @@ def build_stanford_dogs_model(input_shape=(64, 64, 1), num_breeds=120):
     reshaped_features = tf.keras.layers.Reshape((16, 16, 64))(adjusted_features)
 
 
-    x_color = UpSampling2D((2, 2))(reshaped_features)
+    # Colorization
+    x_color = UpSampling2D((2, 2))(reshaped_features)  # 16x16 → 32x32
     x_color = Conv2D(64, (3, 3), activation='relu', padding='same')(x_color)
-    x_color = UpSampling2D((2, 2))(x_color)
+    x_color = UpSampling2D((2, 2))(x_color)  # 32x32 → 64x64
+    x_color = Conv2D(64, (3, 3), activation='relu', padding='same')(x_color)
+    x_color = UpSampling2D((2, 2))(x_color)  # 64x64 → 128x128
     output_img = Conv2D(3, (3, 3), activation='sigmoid', padding='same', name='rgb_output')(x_color)
+
+
 
     # Combine the model
     model = Model(inputs=input_img, outputs=[breed_prediction, output_img])
