@@ -11,7 +11,7 @@ MASK_DIR = "/Users/paigerust/Desktop/ECE3405/Final/Masks"
 # selected_breeds = ['Keeshond', 'Afghan Hound', 'Golden Retriever', 'Standard Poodle']
 IMAGE_SIZE = (128, 128)
 BATCH_SIZE = 16
-EPOCHS = 15
+EPOCHS = 10
 
 X_gray, Y_rgb, y_labels, breed_mapping = load_stanford_dogs_data(DATA_DIR, MASK_DIR, IMAGE_SIZE)
 X_train_gray, X_test_gray, Y_train_rgb, Y_test_rgb, y_train_labels, y_test_labels = split_data(X_gray, Y_rgb, y_labels)
